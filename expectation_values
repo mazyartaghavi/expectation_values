@@ -1,0 +1,83 @@
+pip install qiskit==0.39.2
+     
+
+from qiskit.quantum_info import Statevector
+zero = Statevector([1,0])
+print("zero is", zero)
+     
+
+one = Statevector([0,1])
+print("one is",one)
+     
+
+zero = Statevector.from_int(0, dims = 2)
+one = Statevector.from_int(1, dims = 2)
+print("zero is",zero)
+print("one is",one)
+     
+
+psi = one.tensor(zero.tensor(zero))
+print("psi is",psi)
+     
+
+psi = one^zero^zero
+psi.draw("latex")
+     
+
+psi = Statevector.from_int(4, dims = 8)
+
+     
+
+from numpy import sqrt
+ghz = 1/sqrt(2)*(zero^zero^zero) + 1/sqrt(2)*(one^one^one)
+     
+
+from qiskit.quantum_info import Pauli
+Z0Z1 = Pauli("ZZI")
+print("Z0Z1 is",Z0Z1)
+print("And its matrix is")
+print(Z0Z1.to_matrix())
+     
+
+print("The sparse representation of Z0Z1 is")
+print(Z0Z1.to_matrix(sparse=True))
+     
+
+Z0Z1 = Pauli(([0,1,1],[0,0,0]))
+
+     
+
+from qiskit.opflow.primitive_ops import PauliOp
+H_cut = PauliOp(Pauli("ZZI")) + PauliOp(Pauli("ZIZ"))
+print("H_cut is")
+print(H_cut)
+print("The sparse representation of H_cut is")
+print(H_cut.to_spmatrix())
+     
+
+from qiskit.opflow import I, Z
+H_cut = (Z^Z^I) + (Z^I^Z)
+print("H_cut is")
+print(H_cut)
+     
+
+H_ising = -0.5*(Z^Z^I) + 2*(Z^I^Z) -(I^Z^Z) + (I^Z^I) -5*(I^I^Z)
+
+     
+
+print("The expectation value is", psi.expectation_value(H_cut))
+
+     
+
+print("The expectation value is", psi.inner(psi.evolve(H_cut)))
+
+     
+
+from qiskit.quantum_info import Pauli
+from qiskit.opflow.primitive_ops import PauliOp
+from qiskit.quantum_info import Statevector
+H_cut = PauliOp(Pauli("ZZI")) + PauliOp(Pauli("ZIZ"))
+for x in range(8): # We consider x=0,1...7
+    psi = psi = Statevector.from_int(x, dims = 8)
+    print("The expectation value of |",x,">", "is", 
+        psi.expectation_value(H_cut))
